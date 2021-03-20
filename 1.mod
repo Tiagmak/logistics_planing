@@ -42,11 +42,11 @@ s.t. prod_c{m in month}: 0 <= (venus_c[m] + mars_c[m] + mercury_c[m]) <= min(cap
 s.t. prod_i{m in month}: 0 <= (venus_i[m] + mars_i[m] + mercury_i[m]) <= min(capacity_i["Cleaning"], capacity_i["Cooking"], capacity_i["Packing"]);
 
 var profit_r{m in month};
-s.t. profit_r_{m in month}: profit_r[m] == (venus_r[m] * venus_price_r[m]) + (mars_r[m] * mars_price_r[m]) + (mercury_r[m] * mercury_price_r[m]);
+s.t. profit_r_{m in month}: profit_r[m] = (venus_r[m] * venus_price_r[m]) + (mars_r[m] * mars_price_r[m]) + (mercury_r[m] * mercury_price_r[m]);
 var profit_c{m in month};
-s.t. profit_c_{m in month}: profit_c[m] == (venus_c[m] * venus_price_c[m]) + (mars_c[m] * mars_price_c[m]) + (mercury_c[m] * mercury_price_c[m]);
+s.t. profit_c_{m in month}: profit_c[m] = (venus_c[m] * venus_price_c[m]) + (mars_c[m] * mars_price_c[m]) + (mercury_c[m] * mercury_price_c[m]);
 var profit_i{m in month};
-s.t. profit_i_{m in month}: profit_i[m] == (venus_i[m] * venus_price_i[m]) + (mars_i[m] * mars_price_i[m]) + (mercury_i[m] * mercury_price_i[m]);
+s.t. profit_i_{m in month}: profit_i[m] = (venus_i[m] * venus_price_i[m]) + (mars_i[m] * mars_price_i[m]) + (mercury_i[m] * mercury_price_i[m]);
 
 maximize annual_profit: sum{m in month} (profit_r[m] + profit_c[m] + profit_i[m]);
 
