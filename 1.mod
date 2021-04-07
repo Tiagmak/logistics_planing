@@ -53,10 +53,10 @@ s.t. _profit_c{m in month}: profit_c[m] = ((venus_c[m] * venus_price_c[m]) + (ma
 var profit_i{m in month};
 s.t. _profit_i{m in month}: profit_i[m] = ((venus_i[m] * venus_price_i[m]) + (mars_i[m] * mars_price_i[m]) + (mercury_i[m] * mercury_price_i[m]));
 
-maximize annual_profit: sum{m in month} (profit_r[m] + profit_c[m] + profit_i[m]);
-
 var profit{month};
 s.t. _profit{m in month}: profit[m] = (profit_r[m] + profit_c[m] + profit_i[m]);
+
+maximize annual_profit: sum{m in month} profit[m];
 
 solve;
 
