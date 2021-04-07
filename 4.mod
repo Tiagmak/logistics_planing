@@ -44,9 +44,14 @@ s.t. _storage_r{op in operations}: storage_r[1, op] = 0;
 s.t. _storage_c{op in operations}: storage_c[1, op] = 0;
 s.t. _storage_i{op in operations}: storage_i[1, op] = 0;
 
-s.t. prod_r{m in month, op in operations}: 0 <= (venus_r[m] + mars_r[m] + mercury_r[m]) - storage_r[m, op] <= production_capacity_r[op];
-s.t. prod_c{m in month, op in operations}: 0 <= (venus_c[m] + mars_c[m] + mercury_c[m]) - storage_c[m, op] <= production_capacity_c[op];
-s.t. prod_i{m in month, op in operations}: 0 <= (venus_i[m] + mars_i[m] + mercury_i[m]) - storage_i[m, op] <= production_capacity_i[op];
+var prod_r{m in month, op in operations}, >= 0;
+var prod_c{m in month, op in operations}, >= 0;
+var prod_i{m in month, op in operations}, >= 0;
+s.t. _prod_r{m in month, op in operations}: prod_r[m, op] = (venus_r[m] + mars_r[m] + mercury_r[m]) - storage_r[m, op];
+s.t. _prod_c{m in month, op in operations}: prod_c[m, op] = (venus_c[m] + mars_c[m] + mercury_c[m]) - storage_c[m, op];
+s.t. _prod_i{m in month, op in operations}: prod_i[m, op] = (venus_i[m] + mars_i[m] + mercury_i[m]) - storage_i[m, op];
+
+s.t. production_capacity{m in month, op in operations}: 0 <= ((prod_r[m, op] / production_capacity_r[op]) + (prod_c[m, op] / production_capacity_c[op]) + (prod_i[m, op] / production_capacity_i[op])) <= 1;
 
 var storage_cost{month} >= 0;
 s.t. _storage_cost{m in month}: storage_cost[m] = sum{op in operations} (storage_r[m, op] + storage_c[m, op] + storage_i[m, op]);
