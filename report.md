@@ -7,12 +7,11 @@ geometry: margin=2cm
 output: pdf_document
 ---
 
-
 # Question 1
 
-> Assuming that you cannot hold the product in inventory (i.e., all that is produced in a given month must
+> _Assuming that you cannot hold the product in inventory (i.e., all that is produced in a given month must
 be sold in that month), formulate a linear optimization problem for
-maximizing the revenue.
+maximizing the revenue._
 
 ## Assumptions
 
@@ -73,6 +72,8 @@ We define `prod_r` as the amount of $R$ that is produced each month and define
 assumptions, which states that the production capacity of each
 operation of shared among the production of each type of marmalade.
 
+\pagebreak
+
 ```
 var profit_r{m in month};
 s.t. _profit_r{m in month}: profit_r[m] = ((venus_r[m] * venus_price_r[m]) + (mars_r[m] * mars_price_r[m]) + (mercury_r[m] * mercury_price_r[m]));
@@ -81,9 +82,7 @@ var profit{month};
 s.t. _profit{m in month}: profit[m] = (profit_r[m] + profit_c[m] + profit_i[m]);
 
 maximize annual_profit: sum{m in month} profit[m];
-
-solve;
-end;
+...
 ```
 
 Finally we calculate the profit for each type and month. The reason we
@@ -99,7 +98,7 @@ is a limitation of GLPK.
 
 # Question 2
 
-> Determine the optimal revenue and the corresponding production plan
+> _Determine the optimal revenue and the corresponding production plan_
 
 Running the model `1.mod` annexed (with `glpsol -m 1.mod -o res1`), we
 get the following:
@@ -142,8 +141,8 @@ Month | Venus | Mars | Mercury
 
 # Question 3
 
-> Determine (without solving additional problems) in which of the production lines the company should
-increase capacity
+> _Determine (without solving additional problems) in which of the production lines the company should
+increase capacity_
 
 Month | Cleaning | Cooking  | Packing
 ------+----------+----------+---------
@@ -174,9 +173,9 @@ capacity of the cooking production line.
 
 # Question 4
 
-> Solve the problem again, now supposing that there is unlimited inventory capacity on Earth, with a unit
+> _Solve the problem again, now supposing that there is unlimited inventory capacity on Earth, with a unit
 holding cost of 1 solarcoin per month (i.e., the company must pay that amount for each unit of any of the
-marmalades left in stock at the end of each month)
+marmalades left in stock at the end of each month)_
 
 ## Assumptions
 
@@ -244,6 +243,8 @@ include the cost; this calculation is unchanged, but we change the
 objective to subtract the cost of storage each month from the revenue
 of sales.
 
+\pagebreak
+
 ## Results
 
 Month | Profit
@@ -270,21 +271,29 @@ store the production for later months.
 
 Giving us a total annual profit of $560540\ solarcoins$
 
-Month  | Venus | Mars | Mercury
--------+-------+------+--------
-1      |     0 |    0 |      0
-2      |     0 |    0 |      0
-3      |     0 |    0 |      0
-4      |     0 | 1000 |      0
-5      |  1000 |  330 |      0
-6      |  1000 | 1000 |     20
-7      |  1000 | 1000 |      0
-8      |  1000 | 1000 |   1000
-9      |     0 |  850 |      0
-10     |     0 |  850 |      0
-11     |   299 | 1000 |      0
-12     |   316 | 1000 |      0
-: Amount of product sent to each planet each month
+\newcolumntype{R}{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{2em}}
+
+\begin{table}[h!]
+\caption{Amount of type of product sent to each planet each month}
+\vspace{1em}
+\centering
+\begin{tabular}{c | RRR | RRR | RRR }
+      & \multicolumn{3}{c|}{Venus} & \multicolumn{3}{c|}{Mars} & \multicolumn{3}{c}{Mercury} \\
+Month & R    & C   & I     &  R  &  C     & I     &  R   &  C  &  I    \\ \hline
+1     & 0    & 0   & 0     &  0  &  0     & 0     &  0   &  0  &  0    \\
+2     & 0    & 0   & 0     &  0  &  0     & 0     &  0   &  0  &  0    \\
+3     & 0    & 0   & 0     &  0  &  0     & 0     &  0   &  0  &  0    \\
+4     & 0    & 0   & 0     &  0  &  1000  & 0     &  0   &  0  &  0    \\
+5     & 1000 & 0   & 0     &  0  &  330   & 0     &  0   &  0  &  0    \\
+6     & 1000 & 0   & 0     &  0  &  1000  & 0     &  20  &  0  &  0    \\
+7     & 0    & 0   & 1000  &  0  &  0     & 1000  &  0   &  0  &  0    \\
+8     & 0    & 0   & 1000  &  0  &  0     & 1000  &  0   &  0  &  1000 \\
+9     & 0    & 0   & 0     &  0  &  850   & 0     &  0   &  0  &  0    \\
+10    & 0    & 0   & 0     &  0  &  850   & 0     &  0   &  0  &  0    \\
+11    & 296  & 0   & 3     &  0  &  0     & 1000  &  0   &  0  &  0    \\
+12    & 316  & 0   & 0     &  0  &  0     & 1000  &  0   &  0  &  0    
+\end{tabular}
+\end{table}
 
 Month |  R  |  C   |  I
 ------+-----+------+----
@@ -302,4 +311,8 @@ Month |  R  |  C   |  I
 12    | 0   | 0    | 5   
 13    | 0   | 0    | 0
 : Storage of each type by month
- 
+
+We can see from this table that it becomes optimal to store product in
+the first half of the year, for sale later on, when the prices
+increase. Additionally, we note that storage increases each month by
+at most the prodction capacity of each product.
