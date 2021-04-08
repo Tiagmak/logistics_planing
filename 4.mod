@@ -37,31 +37,36 @@ s.t. venus{m in month}:   0 <= (venus_r[m]   + venus_c[m]   + venus_i[m])   <= s
 s.t. mars{m in month}:    0 <= (mars_r[m]    + mars_c[m]    + mars_i[m])    <= shuttle_capacity;
 s.t. mercury{m in month}: 0 <= (mercury_r[m] + mercury_c[m] + mercury_i[m]) <= shuttle_capacity;
 
-var storage_r{month, operations}, >= 0;
-var storage_c{month, operations}, >= 0;
-var storage_i{month, operations}, >= 0;
-s.t. _storage_r{op in operations}: storage_r[1, op] = 0;
-s.t. _storage_c{op in operations}: storage_c[1, op] = 0;
-s.t. _storage_i{op in operations}: storage_i[1, op] = 0;
+set storage_month := 1..13;
+var storage_r{storage_month}, >= 0, integer;
+var storage_c{storage_month}, >= 0, integer;
+var storage_i{storage_month}, >= 0, integer;
+s.t. _storage_r_start: storage_r[1] = 0;
+s.t. _storage_c_start: storage_c[1] = 0;
+s.t. _storage_i_start: storage_i[1] = 0;
+s.t. _storage_r_end: storage_r[13] = 0;
+s.t. _storage_c_end: storage_c[13] = 0;
+s.t. _storage_i_end: storage_i[13] = 0;
 
-var prod_r{m in month, op in operations}, >= 0;
-var prod_c{m in month, op in operations}, >= 0;
-var prod_i{m in month, op in operations}, >= 0;
-s.t. _clean_before_cooking_r{m in month}: prod_r[m, "Cooking"] <= (prod_r[m, "Cleaning"] + storage_r[m, "Cleaning"]);
-s.t. _clean_before_cooking_c{m in month}: prod_c[m, "Cooking"] <= (prod_c[m, "Cleaning"] + storage_c[m, "Cleaning"]);
-s.t. _clean_before_cooking_i{m in month}: prod_i[m, "Cooking"] <= (prod_i[m, "Cleaning"] + storage_i[m, "Cleaning"]);
-s.t. _cook_before_packing_r{m in month}:  prod_r[m, "Packing"] <= (prod_r[m, "Cooking"]  + storage_r[m, "Cooking"]);
-s.t. _cook_before_packing_c{m in month}:  prod_c[m, "Packing"] <= (prod_c[m, "Cooking"]  + storage_c[m, "Cooking"]);
-s.t. _cook_before_packing_i{m in month}:  prod_i[m, "Packing"] <= (prod_i[m, "Cooking"]  + storage_i[m, "Cooking"]);
-s.t. _available_r{m in month, op in operations}: venus_r[m] + mars_r[m] + mercury_r[m] <= (storage_r[m, op] + prod_r[m, op]);
-s.t. _available_c{m in month, op in operations}: venus_c[m] + mars_c[m] + mercury_c[m] <= (storage_c[m, op] + prod_c[m, op]);
-s.t. _available_i{m in month, op in operations}: venus_i[m] + mars_i[m] + mercury_i[m] <= (storage_i[m, op] + prod_i[m, op]);
+var sent_r{month}, >= 0;
+s.t. _sent_r{m in month}: sent_r[m] = venus_r[m] + mars_r[m] + mercury_r[m];
+var sent_c{month}, >= 0;
+s.t. _sent_c{m in month}: sent_c[m] = venus_c[m] + mars_c[m] + mercury_c[m];
+var sent_i{month}, >= 0;
+s.t. _sent_i{m in month}: sent_i[m] = venus_i[m] + mars_i[m] + mercury_i[m];
+
+var prod_r{month}, >= 0, integer;
+var prod_c{month}, >= 0, integer;
+var prod_i{month}, >= 0, integer;
+s.t. _store_r{m in month}: storage_r[m + 1] = prod_r[m] + storage_r[m] - sent_r[m];
+s.t. _store_c{m in month}: storage_c[m + 1] = prod_c[m] + storage_c[m] - sent_c[m];
+s.t. _store_i{m in month}: storage_i[m + 1] = prod_i[m] + storage_i[m] - sent_i[m];
 
 s.t. production_capacity{m in month, op in operations}:
-    0 <= ((prod_r[m, op] / production_capacity_r[op]) + (prod_c[m, op] / production_capacity_c[op]) + (prod_i[m, op] / production_capacity_i[op])) <= 1;
+    0 <= ((prod_r[m] / production_capacity_r[op]) + (prod_c[m] / production_capacity_c[op]) + (prod_i[m] / production_capacity_i[op])) <= 1;
 
-var storage_cost{month} >= 0;
-s.t. _storage_cost{m in month}: storage_cost[m] = sum{op in operations} (storage_r[m, op] + storage_c[m, op] + storage_i[m, op]);
+var storage_cost{storage_month} >= 0;
+s.t. _storage_cost{m in storage_month}: storage_cost[m] = (storage_r[m] + storage_c[m] + storage_i[m]);
 
 var profit_r{m in month};
 s.t. _profit_r{m in month}: profit_r[m] = ((venus_r[m] * venus_price_r[m]) + (mars_r[m] * mars_price_r[m]) + (mercury_r[m] * mercury_price_r[m]));
