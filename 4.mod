@@ -68,15 +68,15 @@ s.t. production_capacity{m in month, op in operations}:
 var storage_cost{storage_month} >= 0;
 s.t. _storage_cost{m in storage_month}: storage_cost[m] = (storage_r[m] + storage_c[m] + storage_i[m]);
 
-var profit_r{m in month};
-s.t. _profit_r{m in month}: profit_r[m] = ((venus_r[m] * venus_price_r[m]) + (mars_r[m] * mars_price_r[m]) + (mercury_r[m] * mercury_price_r[m]));
-var profit_c{m in month};
-s.t. _profit_c{m in month}: profit_c[m] = ((venus_c[m] * venus_price_c[m]) + (mars_c[m] * mars_price_c[m]) + (mercury_c[m] * mercury_price_c[m]));
-var profit_i{m in month};
-s.t. _profit_i{m in month}: profit_i[m] = ((venus_i[m] * venus_price_i[m]) + (mars_i[m] * mars_price_i[m]) + (mercury_i[m] * mercury_price_i[m]));
+var revenue_r{m in month};
+s.t. _revenue_r{m in month}: revenue_r[m] = ((venus_r[m] * venus_price_r[m]) + (mars_r[m] * mars_price_r[m]) + (mercury_r[m] * mercury_price_r[m]));
+var revenue_c{m in month};
+s.t. _revenue_c{m in month}: revenue_c[m] = ((venus_c[m] * venus_price_c[m]) + (mars_c[m] * mars_price_c[m]) + (mercury_c[m] * mercury_price_c[m]));
+var revenue_i{m in month};
+s.t. _profit_i{m in month}: revenue_i[m] = ((venus_i[m] * venus_price_i[m]) + (mars_i[m] * mars_price_i[m]) + (mercury_i[m] * mercury_price_i[m]));
 
 var profit{month};
-s.t. _profit{m in month}: profit[m] = (profit_r[m] + profit_c[m] + profit_i[m] - storage_cost[m]);
+s.t. _profit{m in month}: profit[m] = (revenue_r[m] + revenue_c[m] + revenue_i[m] - storage_cost[m]);
 
 maximize annual_profit: sum{m in month} profit[m];
 
